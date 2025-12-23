@@ -2,9 +2,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebas
 import {
   getFirestore,
   collection,
-  addDoc,
   getDocs,
-  query
+  doc,
+  setDoc,
+  addDoc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 /* 🔥 Firebase config */
@@ -21,6 +22,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", () => {
+
   const lessonsContainer = document.getElementById("lessonsContainer");
   const lessonSelect = document.getElementById("lessonSelect");
 
@@ -38,14 +40,15 @@ document.addEventListener("DOMContentLoaded", () => {
     lessonsContainer.innerHTML = "";
     lessonSelect.innerHTML = "";
 
-    const q = query(collection(db, "lessons"));
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocs(collection(db, "lessons"));
 
-    snapshot.forEach(doc => {
-      const lesson = doc.data();
+    snapshot.forEach(docSnap => {
+      const lesson = docSnap.data();
+      const lessonId = docSnap.id;
 
       /* карточка урока */
       const div = document.createElement("div");
+      div.className = "card";
       div.style.border = "1px solid #ccc";
       div.style.borderRadius = "10px";
       div.style.padding = "10px";
@@ -54,12 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
       div.innerHTML = `
         <h3>${lesson.name}</h3>
         <ul>
-          ${(lesson.dz || []).map(dz =>
-            `<li>
-              ${dz.text.length > 20 ? dz.text.slice(0, 20) + "..." : dz.text}
-              <span title="${dz.date}" style="color:gray;font-size:12px;"> 📅</span>
-            </li>`
-          ).join("")}
+          ${(lesson.dz || []).map(dz => `
+            <li>
+              ${dz.text.length > 20 ? dz.text.slice(0,20) + "..." : dz.text}
+              <span title="${dz.date}" style="color:gray;font-size:12px;">📅</span>
+            </li>`).join("")}
         </ul>
       `;
 
@@ -67,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       /* option для select */
       const option = document.createElement("option");
-      option.value = lesson.name;
+      option.value = lessonId; // используем ID документа
       option.textContent = lesson.name;
       lessonSelect.appendChild(option);
     });
@@ -80,11 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const name = newLessonInput.value.trim();
     if (!name) return alert("Введите название урока");
 
-    await addDoc(collection(db, "lessons"), {
-      name,
-      dz: []
-    });
-
+    await addDoc(collection(db, "lessons"), { name, dz: [] });
     newLessonInput.value = "";
     loadLessons();
   });
@@ -93,34 +91,29 @@ document.addEventListener("DOMContentLoaded", () => {
      ➕ ДОБАВИТЬ ДЗ
   ====================== */
   addDZBtn.addEventListener("click", async () => {
-    const lessonName = lessonSelect.value;
+    const lessonId = lessonSelect.value;
     const text = newDZInput.value.trim();
     const date = newDZDate.value;
 
-    if (!lessonName || !text || !date) {
-      return alert("Заполни все поля");
-    }
+    if (!lessonId || !text || !date) return alert("Заполни все поля");
 
-    const q = query(collection(db, "lessons"));
-    const snapshot = await getDocs(q);
-
-    snapshot.forEach(async docSnap => {
-      const data = docSnap.data();
-      if (data.name === lessonName) {
+    // Получаем текущий урок
+    const lessonRef = doc(db, "lessons", lessonId);
+    const lessonSnap = await getDocs(collection(db, "lessons"));
+    lessonSnap.forEach(async docSnap => {
+      if (docSnap.id === lessonId) {
+        const data = docSnap.data();
         const updatedDZ = data.dz || [];
         updatedDZ.push({ text, date });
 
-        await addDoc(collection(db, "lessons_history"), {
-          lesson: lessonName,
-          text,
-          date
-        });
+        // Обновляем документ
+        await setDoc(lessonRef, { ...data, dz: updatedDZ });
       }
     });
 
     newDZInput.value = "";
     newDZDate.value = "";
-    loadLessons();
+    loadLessons(); // обновляем список
   });
 
   /* 🚀 старт */
