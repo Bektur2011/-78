@@ -1,0 +1,78 @@
+* { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0; background: #f0f4f8; }
+
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #4f46e5; color: white; padding: 15px 30px;
+}
+header h2 { margin: 0; }
+header button {
+  background: #fff; color: #4f46e5; border: none; padding: 8px 16px;
+  border-radius: 6px; cursor: pointer;
+}
+header button:hover { background: #e0e0ff; }
+
+main { padding: 20px 30px; }
+#lessonsContainer { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+
+.lesson-card {
+  background: #fff; padding: 15px; border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 220px; position: relative;
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 10px 15px;
+  }
+  header h2 {
+    font-size: 16px;
+  }
+  header button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  main { padding: 15px 15px; }
+  #lessonsContainer { gap: 10px; }
+  .lesson-card {
+    width: 100%;
+  }
+  #adminControls {
+    flex-direction: column;
+  }
+  #adminControls input, #adminControls select {
+    width: 100%;
+  }
+}
+.lesson-card button {
+  border: none; border-radius: 5px; padding: 4px 8px;
+  cursor: pointer; font-size: 12px; position: absolute; top: 10px;
+}
+.lesson-card .deleteBtn { right: 10px; background: #ff4d4f; color: white; }
+.lesson-card .deleteBtn:hover { background: #e60000; }
+.lesson-card .settingsBtn { right: 40px; background: #4f46e5; color: white; }
+.lesson-card .settingsBtn:hover { background: #4338ca; }
+
+#adminControls {
+  display: none; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+}
+#adminControls input, #adminControls select {
+  padding: 8px; border-radius: 6px; border: 1px solid #ccc;
+}
+#adminControls button {
+  padding: 8px 12px; border: none; border-radius: 6px;
+  background: #4f46e5; color: white; cursor: pointer;
+}
+#adminControls button:hover { background: #4338ca; }
+
+#modalOverlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+  display: flex; justify-content: center; align-items: center; z-index: 999;
+}
+#modalOverlay.hidden { display: none; }
+#modal {
+  background: #fff; padding: 20px; border-radius: 12px;
+  width: 400px; max-height: 80%; overflow-y: auto;
+}
+#modal h3 { margin-top: 0; }
+#modalDZList li { margin-bottom: 10px; }

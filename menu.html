@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Меню</title>
+  <link rel="stylesheet" href="./stylee.css">
+</head>
+<body>
+<header>
+  <h2 id="welcome"></h2>
+  <button id="historyBtn">История</button>
+</header>
+
+<main>
+  <div id="lessonsContainer"></div>
+
+  <div id="adminControls">
+    <!-- Добавление нового урока -->
+    <input type="text" id="newLessonInput" placeholder="Название урока">
+    <button id="addLessonBtn">Добавить урок</button>
+
+    <!-- Добавление ДЗ к уроку с ручной датой -->
+    <select id="lessonSelect"></select>
+    <input type="text" id="newDZInput" placeholder="Текст ДЗ">
+    <input type="date" id="newDZDate">
+    <button id="addDZBtn">Добавить ДЗ</button>
+  </div>
+</main>
+
+<!-- Модальное окно для настроек карточки -->
+<div id="modalOverlay" class="hidden">
+  <div id="modal">
+    <h3 id="modalTitle"></h3>
+    <ul id="modalDZList"></ul>
+    <button id="closeModalBtn">Закрыть</button>
+  </div>
+</div>
+
+<script src="./scripta.js"></script>
+<script type="module" src="menu.js"></script>
+</body>
+</html>
