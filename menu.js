@@ -8,7 +8,7 @@ import {
   addDoc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-/* 🔥 Firebase config */
+// Firebase конфиг
 const firebaseConfig = {
   apiKey: "AIzaSyB282pAV5W1BGfUHw_bUS4azdyrLnrtg8g",
   authDomain: "myproject-457eb.firebaseapp.com",
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const addDZBtn = document.getElementById("addDZBtn");
 
   /* =====================
-     📥 ЗАГРУЗКА УРОКОВ
+     Загрузка уроков и ДЗ
   ====================== */
   async function loadLessons() {
     lessonsContainer.innerHTML = "";
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const lesson = docSnap.data();
       const lessonId = docSnap.id;
 
-      /* карточка урока */
+      // карточка урока
       const div = document.createElement("div");
       div.className = "card";
       div.style.border = "1px solid #ccc";
@@ -67,16 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       lessonsContainer.appendChild(div);
 
-      /* option для select */
+      // option для select
       const option = document.createElement("option");
-      option.value = lessonId; // используем ID документа
+      option.value = lessonId;
       option.textContent = lesson.name;
       lessonSelect.appendChild(option);
     });
   }
 
   /* =====================
-     ➕ ДОБАВИТЬ УРОК
+     Добавить урок
   ====================== */
   addLessonBtn.addEventListener("click", async () => {
     const name = newLessonInput.value.trim();
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* =====================
-     ➕ ДОБАВИТЬ ДЗ
+     Добавить ДЗ
   ====================== */
   addDZBtn.addEventListener("click", async () => {
     const lessonId = lessonSelect.value;
@@ -97,10 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!lessonId || !text || !date) return alert("Заполни все поля");
 
-    // Получаем текущий урок
+    // Получаем урок по ID
     const lessonRef = doc(db, "lessons", lessonId);
-    const lessonSnap = await getDocs(collection(db, "lessons"));
-    lessonSnap.forEach(async docSnap => {
+    const snapshot = await getDocs(collection(db, "lessons"));
+    snapshot.forEach(async docSnap => {
       if (docSnap.id === lessonId) {
         const data = docSnap.data();
         const updatedDZ = data.dz || [];
@@ -116,6 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadLessons(); // обновляем список
   });
 
-  /* 🚀 старт */
+  /* Старт загрузки */
   loadLessons();
 });
